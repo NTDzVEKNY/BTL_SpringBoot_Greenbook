@@ -1,8 +1,10 @@
 Là 1 người dùng tôi muốn:
 - đăng nhập,xuất - authentication - bảo mật
 - quản lý tài khoản -> admin - quản lý, user - thủ thư, - crud
-- quản lý sách - stock -- tích hợp tìm kiếm sách
-- quản lý đơn vận
+- quản lý sách - stock -- tích hợp tìm kiếm sách - thêm trường sold đã bán bao nhiu
+- quản lý đơn hàng - thông tin đơn hàng -> có trường giá gốc và giá giảm -> nhận tiền thì thủ thư chuyển status từ pending sang complete
 - quản lý blog
 - quản lý khuyến mại - có thời hạn
 - phân quyền
+- dashboard: doanh thu theo date_range tuần tháng năm, số đơn hàng, 
+- thêm con chatbot link sang zalo - cho 1 kịch bản.
