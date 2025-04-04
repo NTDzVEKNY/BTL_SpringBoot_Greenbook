@@ -1,9 +1,0 @@
-Là 1 người dùng tôi muốn:
-- đăng nhập,xuất - authentication - bảo mật !!!!important
-- quản lý tài khoản -> admin - quản lý, user - thủ thư, - crud - !!!! important
-- quản lý sách - stock -- tích hợp tìm kiếm sách - thêm trường sold đã bán bao nhiu !!!! important
-- quản lý đơn hàng - thông tin đơn hàng -> có trường giá gốc và giá giảm -> nhận tiền thì thủ thư chuyển status từ pending sang complete !!
-- quản lý blog  !!
-- quản lý khuyến mại - có thời hạn !!
-- quản lý danh mục !!!! important
-- dashboard: doanh thu theo date_range tuần tháng năm, số đơn hàng, 
