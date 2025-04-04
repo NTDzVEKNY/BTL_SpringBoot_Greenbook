@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +81,10 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> findNewArrivals(int limit) {
-        return bookRepository.findNewArrivals(PageRequest.of(0, limit));
+        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+
+        return bookRepository.findNewArrivals(thirtyDaysAgo, PageRequest.of(0, limit));
+
     }
 
     @Override
