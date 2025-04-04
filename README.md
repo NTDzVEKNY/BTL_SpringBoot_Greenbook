@@ -1,0 +1,124 @@
+# GreenBook - Hệ thống quản lý bán sách trực tuyến
+
+<p align="center">
+  <img src="src/main/resources/static/images/logo.png" alt="GreenBook Logo" width="200">
+</p>
+
+## Giới thiệu
+
+GreenBook là một ứng dụng web quản lý bán sách trực tuyến được phát triển bằng Spring Boot, cho phép admin quản lý toàn bộ quy trình bán hàng từ quản lý sách, danh mục, đơn hàng, khuyến mãi đến quản lý người dùng và blog.
+
+## Các tính năng chính
+
+- **Quản lý sách**: Thêm, sửa, xóa, tìm kiếm sách, quản lý hình ảnh sách
+- **Quản lý danh mục**: Phân loại sách theo danh mục
+- **Quản lý đơn hàng**: Xem và cập nhật trạng thái đơn hàng
+- **Quản lý khuyến mãi**: Tạo và quản lý các chương trình khuyến mãi
+- **Quản lý người dùng**: Phân quyền người dùng (admin, librarian, customer)
+- **Quản lý blog**: Viết và xuất bản bài viết
+
+## Công nghệ sử dụng
+
+- **Backend**: Java 17, Spring Boot 3.2.3, Spring Security, Spring Data JPA
+- **Frontend**: Thymeleaf, Bootstrap 5, jQuery, Font Awesome
+- **Database**: MySQL 8
+- **Build Tool**: Maven
+
+## Yêu cầu hệ thống
+
+- JDK 17
+- Maven 3.6.3+
+- MySQL 8.0+
+
+## Cài đặt và chạy ứng dụng
+
+### Chuẩn bị cơ sở dữ liệu
+
+1. Cài đặt MySQL và tạo database:
+
+```sql
+CREATE DATABASE greenbook CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'greenbook'@'localhost' IDENTIFIED BY 'greenbook123';
+GRANT ALL PRIVILEGES ON greenbook.* TO 'greenbook'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+### Cấu hình ứng dụng
+
+1. Clone repository:
+
+```bash
+git clone https://github.com/yourusername/greenbook.git
+cd greenbook
+```
+
+2. Cấu hình kết nối database trong file `src/main/resources/application.properties`:
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/greenbook?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+spring.datasource.username=greenbook
+spring.datasource.password=greenbook123
+```
+
+### Biên dịch và chạy ứng dụng
+
+#### Sử dụng Maven:
+
+```bash
+mvn clean package
+java -jar target/greenbook-0.0.1-SNAPSHOT.jar
+```
+
+Hoặc chạy trực tiếp:
+
+```bash
+mvn spring-boot:run
+```
+
+Sau khi ứng dụng khởi chạy, truy cập: http://localhost:8080
+
+### Tài khoản mặc định
+
+Khi ứng dụng chạy lần đầu, hệ thống sẽ tự động tạo tài khoản admin với thông tin:
+- Username: admin
+- Password: admin123
+
+*Lưu ý: Hãy đổi mật khẩu này sau khi đăng nhập lần đầu.*
+
+## Cấu trúc dự án
+
+```
+com.sieuvjp.greenbook
+├── config          # Các file cấu hình
+├── controller      # Các controller xử lý request
+├── dto             # Data Transfer Objects
+├── entity          # JPA Entities
+├── enums           # Các enum
+├── exception       # Xử lý ngoại lệ
+├── repository      # JPA Repositories
+├── service         # Business logic
+└── util            # Các tiện ích
+```
+
+## Triển khai với Docker
+
+Để triển khai ứng dụng bằng Docker, sử dụng lệnh sau:
+
+```bash
+# Đóng gói ứng dụng
+mvn clean package -P prod
+
+# Chạy với Docker Compose
+docker-compose up -d
+```
+
+Ứng dụng sẽ chạy tại: http://localhost:8080
+PHPMyAdmin sẽ chạy tại: http://localhost:8081
+
+## Giấy phép
+
+Dự án được phân phối dưới giấy phép MIT. Xem file `LICENSE` để biết thêm chi tiết.
+
+---
+
+&copy; 2025 GreenBook. All rights reserved.
