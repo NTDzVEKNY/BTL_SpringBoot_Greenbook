@@ -48,8 +48,8 @@ FLUSH PRIVILEGES;
 1. Clone repository:
 
 ```bash
-git clone https://github.com/yourusername/greenbook.git
-cd greenbook
+git clone https://github.com/NTDzVEKNY/BTL_SpringBoot_Greenbook.git
+cd BTL_SpringBoot_Greenbook
 ```
 
 2. Cấu hình kết nối database trong file `src/main/resources/application.properties`:
@@ -59,6 +59,8 @@ spring.datasource.url=jdbc:mysql://localhost:3306/greenbook?createDatabaseIfNotE
 spring.datasource.username=greenbook
 spring.datasource.password=greenbook123
 ```
+
+password tùy vào mysql server bạn thiết lập
 
 ### Biên dịch và chạy ứng dụng
 
