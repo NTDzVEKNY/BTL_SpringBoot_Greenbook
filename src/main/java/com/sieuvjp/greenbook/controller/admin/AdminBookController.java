@@ -63,7 +63,7 @@ public class AdminBookController {
         List<Category> categories = categoryService.findAllActive();
         model.addAttribute("categories", categories);
 
-        return "admin/books/list";
+        return "pages/book/index";
     }
 
     @GetMapping("/create")

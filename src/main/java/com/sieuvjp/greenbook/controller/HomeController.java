@@ -13,5 +13,6 @@ public class HomeController {
     @GetMapping("new-dashboard")
     public String index(){
         return "pages/home/index";
-    }
+    };
+
 }
