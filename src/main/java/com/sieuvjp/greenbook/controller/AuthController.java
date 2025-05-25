@@ -29,7 +29,7 @@ public class AuthController {
             return "redirect:/admin/dashboard";
         }
 
-        return "auth/login";
+        return "pages/auth/login";
     }
 
     @GetMapping("/register")
@@ -40,7 +40,7 @@ public class AuthController {
         }
 
         model.addAttribute("user", new UserDTO());
-        return "auth/register";
+        return "pages/auth/register";
     }
 
     @PostMapping("/register")
@@ -50,19 +50,19 @@ public class AuthController {
 
         // Check for validation errors
         if (result.hasErrors()) {
-            return "auth/register";
+            return "pages/auth/register";
         }
 
         // Check if username already exists
         if (userService.existsByUsername(userDTO.getUsername())) {
             result.rejectValue("username", "error.user", "Username is already taken");
-            return "auth/register";
+            return "pages/auth/register";
         }
 
         // Check if email already exists
         if (userService.existsByEmail(userDTO.getEmail())) {
             result.rejectValue("email", "error.user", "Email is already in use");
-            return "auth/register";
+            return "pages/auth/register";
         }
 
         // Set default role for new user
