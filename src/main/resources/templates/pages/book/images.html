@@ -332,7 +332,7 @@
                                                     th:data-image-url="${imageUrl}">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <a th:href="@{/admin/books/images/{id}/delete/{imageUrl}(id=${book.id}, imageUrl=${#strings.substringAfterLast(imageUrl, '/')})}"
+                                            <a th:href="@{/admin/books/images/{id}/delete/{imageUrl}(id=${book.id}, imageUrl=${pathUtils.getFileName(imageUrl)})}"
                                                class="btn btn-sm btn-delete"
                                                onclick="return confirmDelete()">
                                                 <i class="fas fa-trash"></i>

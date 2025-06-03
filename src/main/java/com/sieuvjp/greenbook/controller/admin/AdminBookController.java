@@ -218,4 +218,22 @@ public class AdminBookController {
         redirectAttributes.addFlashAttribute("successMessage", "Stock updated successfully");
         return "redirect:/admin/books";
     }
+
+    @ModelAttribute("pathUtils")
+    public PathUtils pathUtils() {
+        return new PathUtils();
+    }
+
+    public static class PathUtils {
+        public String getFileName(String path) {
+            if (path == null || path.isEmpty()) return "";
+            return path.substring(path.lastIndexOf('/') + 1);
+        }
+
+        public String getFileNameWithoutExtension(String path) {
+            String fileName = getFileName(path);
+            int lastDot = fileName.lastIndexOf('.');
+            return lastDot > 0 ? fileName.substring(0, lastDot) : fileName;
+        }
+    }
 }
