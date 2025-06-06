@@ -117,10 +117,6 @@ docker-compose up -d
 Ứng dụng sẽ chạy tại: http://localhost:8080
 PHPMyAdmin sẽ chạy tại: http://localhost:8081
 
-## Giấy phép
-
-Dự án được phân phối dưới giấy phép MIT. Xem file `LICENSE` để biết thêm chi tiết.
-
 ---
 
 &copy; 2025 GreenBook. All rights reserved.
