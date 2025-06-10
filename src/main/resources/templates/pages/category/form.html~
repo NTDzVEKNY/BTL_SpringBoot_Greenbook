@@ -334,17 +334,16 @@
                                           th:field="*{description}"
                                           rows="4"
                                           placeholder=""></textarea>
-
-                                <label for="description">Description</label>
-                                <div class="form-text">
-                                    <i class="fas fa-info-circle me-1"></i>
-                                    Provide a brief description to help users understand this category
-                                </div>
                                 <div class="mt-2 text-end">
                                     <button type="button" class="btn btn-outline-primary" id="generateCategoryDescription">
                                         <i class="fas fa-magic me-1"></i> Gợi ý mô tả với AI
                                     </button>
                                     <div class="form-text text-muted">Dựa vào tên thể loại để gợi ý nội dung mô tả phù hợp.</div>
+                                </div>
+                                <label for="description">Description</label>
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Provide a brief description to help users understand this category
                                 </div>
                             </div>
 

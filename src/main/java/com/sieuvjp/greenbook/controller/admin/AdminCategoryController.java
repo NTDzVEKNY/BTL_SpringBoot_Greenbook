@@ -10,7 +10,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.google.genai.Client;
+import com.google.genai.types.GenerateContentResponse;
+import org.springframework.http.ResponseEntity;
 
+import java.util.Map;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +24,21 @@ import java.util.stream.Collectors;
 public class AdminCategoryController {
 
     private final CategoryService categoryService;
+
+    @GetMapping("/suggest-description")
+    public ResponseEntity<Map<String, String>> suggestCategoryDescription(@RequestParam String name) {
+        try {
+            Client client = new Client();
+
+            String prompt = "Viết một đoạn mô tả ngắn và thu hút cho thể loại sách có tên là: \"" + name + "\". Đoạn mô tả nên giải thích ngắn gọn thể loại này là gì và tại sao người đọc nên quan tâm.";
+
+            GenerateContentResponse response = client.models.generateContent("gemini-1.5-flash", prompt, null);
+
+            return ResponseEntity.ok(Map.of("description", response.text()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("description", "Lỗi AI: " + e.getMessage()));
+        }
+    }
 
     @GetMapping
     public String listCategories(Model model) {

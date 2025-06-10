@@ -255,6 +255,7 @@
                                                   th:field="*{description}" rows="8"
                                                   placeholder="Enter detailed book description, synopsis, or any additional information..."
                                                   maxlength="5000"></textarea>
+
                                         <div class="character-counter">
                                             <span id="charCount">0</span> / 5000 characters
                                         </div>
