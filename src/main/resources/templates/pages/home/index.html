@@ -346,6 +346,9 @@
                 font-weight: 600;
                 animation: pulse-badge 2s infinite;
             }
+            .export-report-wrapper {
+               margin-top: 1rem;
+            }
 
             @keyframes pulse-badge {
                 0%, 100% { transform: scale(1); }
@@ -365,7 +368,9 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h1 class="dashboard-title">Dashboard</h1>
-                            <p class="dashboard-subtitle mb-0">Welcome back! Here's what's happening with your bookstore today.</p>
+                            <p class="dashboard-subtitle mb-0">
+                                Welcome back! Here's what's happening with your bookstore today.
+                            </p>
                         </div>
                         <div class="text-end">
                             <div class="fs-4 fw-bold" id="currentTime">12:34 PM</div>
@@ -373,9 +378,9 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
-
         <!-- Stats Cards -->
         <div class="row">
             <div class="col-xl-3 col-md-6">
@@ -581,7 +586,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-xl-6">
                 <div class="table-card">
                     <div class="table-header">
@@ -640,6 +644,11 @@
                         </table>
                     </div>
                 </div>
+            </div>
+            <div class="export-report-wrapper mt-3 d-flex justify-content-center" style="z-index: 999;">
+                <a href="/admin/report/export" class="btn btn-success">
+                    <i class="fas fa-file-export"></i> Export
+                </a>
             </div>
         </div>
     </div>
