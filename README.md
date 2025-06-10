@@ -74,7 +74,7 @@ java -jar target/greenbook-0.0.1-SNAPSHOT.jar
 Hoặc chạy trực tiếp:
 
 ```bash
-mvn spring-boot:run
+ GOOGLE_API_KEY=<your-ai-api-key> mvn spring-boot:run
 ```
 
 Sau khi ứng dụng khởi chạy, truy cập: http://localhost:8080
