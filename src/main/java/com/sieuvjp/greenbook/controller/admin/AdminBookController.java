@@ -5,6 +5,9 @@ import com.sieuvjp.greenbook.entity.Book;
 import com.sieuvjp.greenbook.entity.Category;
 import com.sieuvjp.greenbook.service.BookService;
 import com.sieuvjp.greenbook.service.CategoryService;
+import com.google.genai.Client;
+import com.google.genai.types.GenerateContentResponse;
+import org.springframework.http.ResponseEntity;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Map;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +32,20 @@ public class AdminBookController {
 
     private final BookService bookService;
     private final CategoryService categoryService;
+
+    @GetMapping("/suggest-description")
+    public ResponseEntity<Map<String, String>> suggestBookDescription(@RequestParam String title) {
+        try {
+            Client client = new Client();
+            String prompt = "Viết đoạn mô tả hấp dẫn, mang tính giới thiệu cho cuốn sách có tiêu đề: \"" + title + "\". Đoạn mô tả nên súc tích, truyền cảm hứng và thu hút độc giả.";
+
+            GenerateContentResponse response = client.models.generateContent("gemini-1.5-flash", prompt, null);
+
+            return ResponseEntity.ok(Map.of("description", response.text()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("description", "Lỗi AI: " + e.getMessage()));
+        }
+    }
 
     @GetMapping
     public String listBooks(
