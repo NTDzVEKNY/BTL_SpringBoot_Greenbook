@@ -133,10 +133,18 @@
                                             <a th:href="@{/admin/users/edit/{id}(id=${user.id})}" class="btn btn-sm btn-primary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
+
                                             <a th:href="@{/admin/users/toggle-status/{id}(id=${user.id})}"
-                                               class="btn btn-sm btn-warning btn-toggle-status" title="Toggle Status">
+                                               class="btn btn-sm btn-warning btn-toggle-status" title="Toggle Status"
+                                               th:if="${#authorization.expression('hasRole(''ADMIN'')') and user.role.name() != 'ADMIN'}">
                                                 <i class="fas fa-sync-alt"></i>
                                             </a>
+                                            <button th:if="${user.role.name() == 'ADMIN'}"
+                                                    class="btn btn-sm btn-secondary"
+                                                    disabled title="Cannot change status admin user">
+                                                <i class="fas fa-shield-alt"></i>
+                                            </button>
+
                                             <a th:href="@{/admin/users/delete/{id}(id=${user.id})}"
                                                class="btn btn-sm btn-danger btn-delete" title="Delete"
                                                th:if="${#authorization.expression('hasRole(''ADMIN'')') and user.role.name() != 'ADMIN'}">
