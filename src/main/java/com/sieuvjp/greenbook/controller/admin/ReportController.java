@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Controller
@@ -39,7 +38,7 @@ public class ReportController {
                     .append(book.getPublishedDate()).append("\n");
         }
 
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(csv.toString().getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(csv.toString().getBytes("UTF-8"));
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=books_report.csv")
@@ -48,6 +47,6 @@ public class ReportController {
     }
 
     private String safe(String s) {
-        return s == null ? "" : s.replace(",", " "); // tránh lỗi CSV do dấu phẩy
+        return s == null ? "" : s.replace(",", " "); // Tránh lỗi dấu phẩy trong CSV
     }
 }
