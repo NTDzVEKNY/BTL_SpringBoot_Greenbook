@@ -5,6 +5,10 @@ import com.sieuvjp.greenbook.entity.Blog;
 import com.sieuvjp.greenbook.entity.User;
 import com.sieuvjp.greenbook.enums.BlogStatus;
 import com.sieuvjp.greenbook.service.BlogService;
+import com.google.genai.Client;
+import com.google.genai.types.GenerateContentResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import com.sieuvjp.greenbook.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Map;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +36,20 @@ public class AdminBlogController {
 
     private final BlogService blogService;
     private final UserService userService;
+
+    @GetMapping("/suggest-content")
+    public ResponseEntity<Map<String, String>> suggestContent(@RequestParam String title) {
+        Client client = new Client();
+        try {
+            String prompt = "Viết một bài blog chuyên nghiệp với tiêu đề: \"" + title + "\". Bài viết gồm mở đầu, nội dung chính và kết luận.";
+
+            GenerateContentResponse response = client.models.generateContent("gemini-1.5-flash", prompt, null);
+
+            return ResponseEntity.ok(Map.of("content", response.text()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("content", "Lỗi AI: " + e.getMessage()));
+        }
+    }
 
     @GetMapping
     public String listBlogs(

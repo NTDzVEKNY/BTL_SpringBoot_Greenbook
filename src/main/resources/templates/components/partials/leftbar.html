@@ -9,7 +9,7 @@
     <div class="startbar d-print-none">
 
         <div class="brand">
-            <a href="#" class="logo">
+            <a th:href="@{/}" class="logo">
                 <span>
                     <img th:src="@{/images/logo-sm.png}" alt="logo-small" class="logo-sm">
                 </span>
@@ -37,6 +37,24 @@
                                 <i class="iconoir-home-simple menu-icon"></i>
                                 <span>Dashboards</span>
                             </a>
+                        </li>
+
+                        <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                            <a class="nav-link" href="#sidebarUserManagement" data-bs-toggle="collapse" role="button"
+                               aria-expanded="false" aria-controls="sidebarUserManagement">
+                                <i class="iconoir-user menu-icon"></i>
+                                <span>Users</span>
+                            </a>
+                            <div class="collapse " id="sidebarUserManagement">
+                                <ul class="nav flex-column">
+                                    <li class="nav-item">
+                                        <a class="nav-link" th:href="@{/admin/users}">All Users</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" th:href="@{/admin/users/create}">Add New User</a>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
 
                         <li class="nav-item">
@@ -106,24 +124,6 @@
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" th:href="@{/admin/promotions/create}">Add New Promotion</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-
-                        <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                            <a class="nav-link" href="#sidebarUserManagement" data-bs-toggle="collapse" role="button"
-                               aria-expanded="false" aria-controls="sidebarUserManagement">
-                                <i class="iconoir-user menu-icon"></i>
-                                <span>Users</span>
-                            </a>
-                            <div class="collapse " id="sidebarUserManagement">
-                                <ul class="nav flex-column">
-                                    <li class="nav-item">
-                                        <a class="nav-link" th:href="@{/admin/users}">All Users</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" th:href="@{/admin/users/create}">Add New User</a>
                                     </li>
                                 </ul>
                             </div>

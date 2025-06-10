@@ -4,7 +4,8 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{components/layouts/main}">
 <head>
-    <title th:text="${blog.id == null ? 'Add Blog' : 'Edit Blog'} + ' - GreenBook Admin'">Add/Edit Blog - GreenBook Admin</title>
+    <title th:text="${blog.id == null ? 'Add Blog' : 'Edit Blog'} + ' - GreenBook Admin'">Add/Edit Blog - GreenBook
+        Admin</title>
 
     <th:block layout:fragment="stylesheets">
         <style>
@@ -519,7 +520,9 @@
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Dashboard</a></li>
                             <li class="breadcrumb-item"><a th:href="@{/admin/blogs}">Blogs</a></li>
-                            <li class="breadcrumb-item active" th:text="${blog.id == null ? 'Add New' : 'Edit'}">Add/Edit</li>
+                            <li class="breadcrumb-item active" th:text="${blog.id == null ? 'Add New' : 'Edit'}">
+                                Add/Edit
+                            </li>
                         </ol>
                     </div>
                     <div class="text-end" th:if="${blog.id != null}">
@@ -536,7 +539,8 @@
             <div class="blog-icon">
                 <i th:class="${blog.id == null ? 'fas fa-plus' : 'fas fa-edit'}"></i>
             </div>
-            <h3 class="text-center mb-2" th:text="${blog.id == null ? 'Create New Blog Post' : 'Edit Blog Post'}">Blog Form</h3>
+            <h3 class="text-center mb-2" th:text="${blog.id == null ? 'Create New Blog Post' : 'Edit Blog Post'}">Blog
+                Form</h3>
             <p class="text-center mb-0 opacity-75">
                 <span th:if="${blog.id == null}">Share your thoughts and insights with your readers</span>
                 <span th:if="${blog.id != null}">Update your blog content and settings</span>
@@ -552,12 +556,19 @@
                 <h3 class="preview-blog-title" id="previewTitle" th:text="${blog.title ?: 'Blog Title'}">Blog Title</h3>
                 <div class="preview-meta">
                     <div class="preview-author">
-                        <div class="author-avatar" th:text="${#strings.substring(blog.authorName ?: 'A', 0, 1).toUpperCase()}">A</div>
+                        <div class="author-avatar"
+                             th:text="${#strings.substring(blog.authorName ?: 'A', 0, 1).toUpperCase()}">A
+                        </div>
                         <span th:text="${blog.authorName ?: 'Author Name'}">Author Name</span>
                     </div>
-                    <div class="preview-status" id="previewStatus" th:classappend="${blog.status?.name() == 'PUBLISHED' ? 'status-published' : 'status-draft'}" th:text="${blog.status ?: 'DRAFT'}">DRAFT</div>
+                    <div class="preview-status" id="previewStatus"
+                         th:classappend="${blog.status?.name() == 'PUBLISHED' ? 'status-published' : 'status-draft'}"
+                         th:text="${blog.status ?: 'DRAFT'}">DRAFT
+                    </div>
                 </div>
-                <div class="preview-content" id="previewContent" th:text="${blog.content ?: 'Blog content will appear here...'}">Blog content will appear here...</div>
+                <div class="preview-content" id="previewContent"
+                     th:text="${blog.content ?: 'Blog content will appear here...'}">Blog content will appear here...
+                </div>
             </div>
         </div>
 
@@ -589,7 +600,8 @@
                                                placeholder=""
                                                th:classappend="${#fields.hasErrors('title')} ? 'is-invalid' : ''">
                                         <label for="title" class="required-field">Blog Title</label>
-                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}"
+                                             th:errors="*{title}">
                                             Title error message
                                         </div>
                                     </div>
@@ -633,10 +645,17 @@
                                           placeholder="Start writing your blog content here... Share your thoughts, insights, and ideas with your readers."
                                           maxlength="50000"
                                           th:classappend="${#fields.hasErrors('content')} ? 'is-invalid' : ''"></textarea>
+                                <div class="mt-3 text-end">
+                                    <button type="button" class="btn btn-outline-primary" id="generateAiContent">
+                                        <i class="fas fa-magic me-1"></i> Gợi ý nội dung với AI
+                                    </button>
+                                    <div class="form-text text-muted mt-2">Nội dung sẽ được gợi ý dựa trên tiêu đề đã nhập.</div>
+                                </div>
                                 <div class="character-counter">
                                     <span id="charCount">0</span> / 50,000 characters
                                 </div>
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('content')}"
+                                     th:errors="*{content}">
                                     Content error message
                                 </div>
                             </div>
@@ -659,7 +678,8 @@
                                         <i class="fas fa-check-circle me-1"></i>Image uploaded successfully
                                     </div>
                                 </div>
-                                <div th:if="${blog.imageUrl == null || blog.imageUrl.isEmpty()}" class="image-placeholder">
+                                <div th:if="${blog.imageUrl == null || blog.imageUrl.isEmpty()}"
+                                     class="image-placeholder">
                                     <i class="fas fa-image"></i>
                                     <h5>No Featured Image</h5>
                                     <p class="mb-0">Upload an image to make your blog more engaging</p>
@@ -689,7 +709,9 @@
                             <div class="metadata-grid">
                                 <div class="metadata-item">
                                     <div class="metadata-label">Author</div>
-                                    <div class="metadata-value" th:text="${blog.authorName ?: 'Current User'}">Current User</div>
+                                    <div class="metadata-value" th:text="${blog.authorName ?: 'Current User'}">Current
+                                        User
+                                    </div>
                                 </div>
 
                                 <div class="metadata-item" th:if="${blog.id != null}">
@@ -699,7 +721,8 @@
 
                                 <div class="metadata-item" th:if="${blog.id != null && blog.publishedDate != null}">
                                     <div class="metadata-label">Published</div>
-                                    <div class="metadata-value" th:text="${blog.publishedDateFormatted}">01/01/2023</div>
+                                    <div class="metadata-value" th:text="${blog.publishedDateFormatted}">01/01/2023
+                                    </div>
                                 </div>
 
                                 <div class="metadata-item" th:if="${blog.id != null}">
@@ -898,6 +921,35 @@
             updateCharCount();
         });
     </script>
+
+    <script>
+        document.getElementById('generateAiContent').addEventListener('click', async function () {
+            const title = document.getElementById('title').value.trim();
+            if (!title) {
+                alert('Vui lòng nhập tiêu đề trước khi sử dụng AI gợi ý.');
+                return;
+            }
+
+            const btn = this;
+            const contentTextarea = document.getElementById('content');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Đang gợi ý...';
+
+            try {
+                const response = await fetch(`/admin/blogs/suggest-content?title=${encodeURIComponent(title)}`);
+                const data = await response.json();
+
+                contentTextarea.value = data.content;
+                contentTextarea.dispatchEvent(new Event('input')); // Cập nhật preview + counter
+            } catch (error) {
+                alert('Không thể lấy nội dung từ AI: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-magic me-1"></i> Gợi ý nội dung với AI';
+            }
+        });
+    </script>
+
 </th:block>
 </body>
 </html>
