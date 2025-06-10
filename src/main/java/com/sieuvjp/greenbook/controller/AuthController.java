@@ -26,7 +26,7 @@ public class AuthController {
     public String login() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
-            return "redirect:/admin/dashboard";
+            return "redirect:/admin";
         }
 
         return "pages/auth/login";
@@ -36,7 +36,7 @@ public class AuthController {
     public String showRegistrationForm(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
-            return "redirect:/admin/dashboard";
+            return "redirect:/admin";
         }
 
         model.addAttribute("user", new UserDTO());
