@@ -15,9 +15,9 @@ SET FOREIGN_KEY_CHECKS = 1;
 INSERT INTO users (username, password, email, full_name, phone, address, role, is_active, created_at, updated_at)
 VALUES
 -- Admin password: admin123 (BCrypt encoded)
--- ('admin', '$2a$10$rjf7sXQyN1HVAqO0k2A9xuS6oUSd8.DmIAJvQr9PJvwKdKdqMr4TC', 'admin@greenbook.com', 'System Admin', '0987654321', 'Hà Nội', 'ADMIN', 1, NOW(), NOW()),
+-- ('admin', '$2a$10$/6BdXwYKLs4pNpYHRUojSOWfwkHN8cvoT9jYxe4UtFVCNh2L6QqKm', 'admin@greenbook.com', 'System Admin', '0987654321', 'Hà Nội', 'ADMIN', 1, NOW(), NOW()),
 -- Librarian password: lib123
-('librarian', '$10$gg7orMhS/McI9k7TE.bFie/PlUl0xO4gavtYlPin8WP/sIk3a27wu', 'librarian@greenbook.com', 'Book Manager', '0912345678', 'Hồ Chí Minh', 'LIBRARIAN', 1, NOW(), NOW()),
+('librarian', '$2a$10$gg7orMhS/McI9k7TE.bFie/PlUl0xO4gavtYlPin8WP/sIk3a27wu', 'librarian@greenbook.com', 'Book Manager', '0912345678', 'Hồ Chí Minh', 'LIBRARIAN', 1, NOW(), NOW()),
 -- Customer password: user123
 ('user1', '$2a$10$JHLAm8UzP.XjjDYy4Jjz5e50GsKliLzQ0iQp3nqZUwjUCJTG2vLES', 'user1@example.com', 'Nguyễn Văn A', '0901234567', 'Đà Nẵng', 'CUSTOMER', 1, NOW(), NOW()),
 ('user2', '$2a$10$JHLAm8UzP.XjjDYy4Jjz5e50GsKliLzQ0iQp3nqZUwjUCJTG2vLES', 'user2@example.com', 'Trần Thị B', '0909876543', 'Cần Thơ', 'CUSTOMER', 1, NOW(), NOW()),
