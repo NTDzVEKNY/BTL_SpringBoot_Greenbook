@@ -597,6 +597,7 @@
                                 <div class="col-md-4">
                                     <div class="form-floating-label status-selector">
                                         <select id="status" th:field="*{status}" required>
+                                            <option value="">Select status</option>
                                             <option th:each="blogStatus : ${blogStatuses}"
                                                     th:value="${blogStatus}"
                                                     th:text="${blogStatus}">
