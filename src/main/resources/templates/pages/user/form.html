@@ -519,8 +519,8 @@
                             <!-- Role -->
                             <div class="form-floating-label role-select">
                                 <select id="role" th:field="*{role}" required>
-                                    <option value="">Select user role</option>
                                     <option th:each="roleOption : ${roles}"
+                                            th:if="${roleOption.name() != 'ADMIN'}"
                                             th:value="${roleOption}"
                                             th:text="${roleOption}">
                                         CUSTOMER
