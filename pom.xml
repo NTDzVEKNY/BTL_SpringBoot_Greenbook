@@ -33,9 +33,20 @@
     </properties>
     <dependencies>
         <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>2.0.27</version> <!-- Chọn phiên bản mới nhất của PDFBox -->
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.3</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -95,6 +106,12 @@
             <artifactId>google-genai</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.13.3</version>
+        </dependency>
+
         <!-- JSON Processing -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -177,6 +194,11 @@
         </profile>
     </profiles>
     <repositories>
+            <repository>
+                <id>itext-repo</id>
+                <url>https://maven.itextpdf.com</url>
+            </repository>
+
         <repository>
             <id>central</id>
             <name>Maven Central</name>
