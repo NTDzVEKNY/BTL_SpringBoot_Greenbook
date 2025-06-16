@@ -3,143 +3,254 @@ package com.sieuvjp.greenbook.controller.admin;
 import lombok.RequiredArgsConstructor;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
+import com.sieuvjp.greenbook.service.OrderService;
+import com.sieuvjp.greenbook.service.BookService;
+import com.sieuvjp.greenbook.service.CategoryService;
+import com.sieuvjp.greenbook.repository.OrderDetailRepository;
+import com.sieuvjp.greenbook.repository.CategoryRepository;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin/report")
 @RequiredArgsConstructor
 public class ReportController {
 
+    private final OrderService orderService;
+    private final BookService bookService;
+    private final CategoryService categoryService;
+    private final OrderDetailRepository orderDetailRepository;
+    private final CategoryRepository categoryRepository;
+
     @GetMapping("/export")
-    public ResponseEntity<byte[]> exportPDF() throws IOException, DocumentException {
-        // Giả lập dữ liệu doanh thu tháng này và tháng trước
-        double totalRevenueCurrentMonth = 5000000;  // Tổng doanh thu tháng này
-        double totalRevenuePreviousMonth = 4000000;  // Tổng doanh thu tháng trước
+    public ResponseEntity<byte[]> exportPDF() {
+        try {
+            // Lấy dữ liệu thực từ database
+            LocalDateTime startOfMonth = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+            LocalDateTime endOfMonth = LocalDateTime.now().withDayOfMonth(LocalDateTime.now().toLocalDate().lengthOfMonth()).withHour(23).withMinute(59).withSecond(59);
+            double totalRevenueCurrentMonth = orderService.getRevenueBetween(startOfMonth, endOfMonth);
 
-        // Giả lập các quyển sách bán chạy nhất trong tháng
-        List<Object[]> topSellingBooks = Arrays.asList(
-                new Object[]{"Sach A", 1500},
-                new Object[]{"Sach B", 1300},
-                new Object[]{"Sach C", 1200},
-                new Object[]{"Sach D", 1100},
-                new Object[]{"Sach E", 1000}
-        );
+            LocalDateTime startOfPreviousMonth = startOfMonth.minusMonths(1);
+            LocalDateTime endOfPreviousMonth = startOfMonth.minusSeconds(1);
+            double totalRevenuePreviousMonth = orderService.getRevenueBetween(startOfPreviousMonth, endOfPreviousMonth);
 
-        // Giả lập các danh mục bán chạy nhất trong tháng
-        List<Object[]> topSellingCategories = Arrays.asList(
-                new Object[]{"Danh muc A", 2000000.0},
-                new Object[]{"Danh muc B", 1500000.0},
-                new Object[]{"Danh muc C", 1000000.0},
-                new Object[]{"Danh muc D", 500000.0},
-                new Object[]{"Danh muc E", 300000.0}
-        );
+            List<Map<String, Object>> topSellingBooksData = orderService.getTopSellingBooks(5);
+            List<Object[]> topSellingCategories = categoryRepository.findTopSellingCategories(5);
+            double growthRate = calculateGrowthRate(totalRevenuePreviousMonth, totalRevenueCurrentMonth);
 
-        // Tính tỷ lệ tăng trưởng doanh thu so với tháng trước
-        double growthRate = calculateGrowthRate(totalRevenuePreviousMonth, totalRevenueCurrentMonth);
+            // Tạo PDF với iText
+            Document document = new Document(PageSize.A4);
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+            document.open();
 
-        // Tạo PDF với iText
-        Document document = new Document();
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PdfWriter.getInstance(document, outputStream);
-        document.open();
+            // Tạo font hỗ trợ tiếng Việt
+            Font titleFont = createVietnameseFont(18, Font.BOLD);
+            Font headerFont = createVietnameseFont(14, Font.BOLD);
+            Font normalFont = createVietnameseFont(12, Font.NORMAL);
 
-        // Tạo font (sử dụng font mặc định không cần tiếng Việt có dấu)
-        Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 18, Font.BOLD);
-        Font headerFont = new Font(Font.FontFamily.TIMES_ROMAN, 14, Font.BOLD);
-        Font normalFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.NORMAL);
+            // Thêm tiêu đề
+            Paragraph title = new Paragraph("BÁO CÁO DOANH THU", titleFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+            title.setSpacingAfter(20f);
+            document.add(title);
 
-        // Thêm tiêu đề
-        Paragraph title = new Paragraph("BAO CAO DOANH THU", titleFont);
-        title.setAlignment(Element.ALIGN_CENTER);
-        document.add(title);
-        document.add(new Paragraph(" ")); // Dòng trống
+            // Thông tin công ty và thời gian tạo báo cáo
+            document.add(new Paragraph("Công ty: Nhà sách Green Book", normalFont));
+            document.add(new Paragraph("Thời gian tạo báo cáo: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()), normalFont));
+            document.add(new Paragraph(" "));
 
-        // Thông tin công ty và thời gian
-        document.add(new Paragraph("Cong ty: Cong ty A", normalFont));
-        document.add(new Paragraph("Ngay xuat bao cao: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), normalFont));
-        document.add(new Paragraph(" "));
+            // Tổng quan doanh thu
+            Paragraph overview = new Paragraph("TỔNG QUAN", headerFont);
+            overview.setSpacingBefore(10f);
+            overview.setSpacingAfter(10f);
+            document.add(overview);
+            document.add(new Paragraph("Tổng doanh thu tháng này: " + String.format("%,.0f", totalRevenueCurrentMonth) + " VNĐ", normalFont));
+            document.add(new Paragraph("Tỷ lệ tăng trưởng: " + String.format("%.2f%%", growthRate), normalFont));
+            document.add(new Paragraph(" "));
 
-        // Thông tin doanh thu tổng quan
-        document.add(new Paragraph("THONG TIN TONG QUAN", headerFont));
-        document.add(new Paragraph("Tong doanh thu thang nay: " + String.format("%,.0f VND", totalRevenueCurrentMonth), normalFont));
-        document.add(new Paragraph("Ty le tang truong: " + String.format("%.2f%%", growthRate), normalFont));
-        document.add(new Paragraph(" "));
+            // Bảng top sách bán chạy
+            Paragraph bookHeader = new Paragraph("TOP 5 SÁCH BÁN CHẠY NHẤT", headerFont);
+            bookHeader.setSpacingBefore(15f);
+            bookHeader.setSpacingAfter(10f);
+            document.add(bookHeader);
 
-        // Bảng sách bán chạy nhất
-        document.add(new Paragraph("5 QUYEN SACH BAN CHAY NHAT", headerFont));
-        PdfPTable bookTable = new PdfPTable(2);
-        bookTable.setWidthPercentage(100);
-        bookTable.addCell(new PdfPCell(new Phrase("Ten sach", headerFont)));
-        bookTable.addCell(new PdfPCell(new Phrase("So luong ban", headerFont)));
+            PdfPTable bookTable = new PdfPTable(3);
+            bookTable.setWidthPercentage(100);
+            bookTable.setWidths(new float[]{4, 2, 3});
 
-        int count = 0;
-        for (Object[] book : topSellingBooks) {
-            if (count++ == 5) break;
-            bookTable.addCell(new PdfPCell(new Phrase(book[0].toString(), normalFont)));
-            bookTable.addCell(new PdfPCell(new Phrase(book[1].toString(), normalFont)));
+            // Header bảng sách
+            addTableHeader(bookTable, "Tên sách", headerFont);
+            addTableHeader(bookTable, "Số lượng bán", headerFont);
+            addTableHeader(bookTable, "Doanh thu", headerFont);
+
+            // Dữ liệu sách
+            if (topSellingBooksData != null && !topSellingBooksData.isEmpty()) {
+                for (Map<String, Object> book : topSellingBooksData) {
+                    String bookTitle = book.get("title") != null ? book.get("title").toString() : "Không có";
+                    String soldQuantity = book.get("soldQuantity") != null ? book.get("soldQuantity").toString() : "0";
+                    double revenue = book.get("revenue") != null ? ((Number)book.get("revenue")).doubleValue() : 0.0;
+
+                    addTableCell(bookTable, bookTitle, normalFont, Element.ALIGN_LEFT);
+                    addTableCell(bookTable, soldQuantity, normalFont, Element.ALIGN_CENTER);
+                    addTableCell(bookTable, String.format("%,.0f", revenue) + " VNĐ", normalFont, Element.ALIGN_RIGHT);
+                }
+            } else {
+                addNoDataRow(bookTable, "Không có dữ liệu", normalFont, 3);
+            }
+
+            document.add(bookTable);
+            document.add(new Paragraph(" "));
+
+            // Bảng top danh mục bán chạy
+            Paragraph categoryHeader = new Paragraph("TOP 5 DANH MỤC BÁN CHẠY NHẤT", headerFont);
+            categoryHeader.setSpacingBefore(15f);
+            categoryHeader.setSpacingAfter(10f);
+            document.add(categoryHeader);
+
+            PdfPTable categoryTable = new PdfPTable(2);
+            categoryTable.setWidthPercentage(100);
+            categoryTable.setWidths(new float[]{3, 2});
+
+            // Header bảng danh mục
+            addTableHeader(categoryTable, "Danh mục", headerFont);
+            addTableHeader(categoryTable, "Doanh thu", headerFont);
+
+            // Dữ liệu danh mục
+            if (topSellingCategories != null && !topSellingCategories.isEmpty()) {
+                for (Object[] category : topSellingCategories) {
+                    String categoryName = category[0] != null ? category[0].toString() : "Không có";
+                    double categoryRevenue = category[1] != null ? ((Number)category[1]).doubleValue() : 0.0;
+
+                    addTableCell(categoryTable, categoryName, normalFont, Element.ALIGN_LEFT);
+                    addTableCell(categoryTable, String.format("%,.0f", categoryRevenue) + " VNĐ", normalFont, Element.ALIGN_RIGHT);
+                }
+            } else {
+                addNoDataRow(categoryTable, "Không có dữ liệu", normalFont, 2);
+            }
+
+            document.add(categoryTable);
+            document.add(new Paragraph(" "));
+
+            // So sánh doanh thu
+            Paragraph compareHeader = new Paragraph("SO SÁNH DOANH THU", headerFont);
+            compareHeader.setSpacingBefore(15f);
+            compareHeader.setSpacingAfter(10f);
+            document.add(compareHeader);
+
+            PdfPTable compareTable = new PdfPTable(2);
+            compareTable.setWidthPercentage(100);
+            compareTable.setWidths(new float[]{3, 2});
+
+            // Header bảng so sánh
+            addTableHeader(compareTable, "Mô tả", headerFont);
+            addTableHeader(compareTable, "Giá trị", headerFont);
+
+            // Dữ liệu so sánh
+            String[][] compareData = {
+                    {"Doanh thu tháng trước", String.format("%,.0f", totalRevenuePreviousMonth) + " VNĐ"},
+                    {"Doanh thu tháng này", String.format("%,.0f", totalRevenueCurrentMonth) + " VNĐ"},
+                    {"Chênh lệch", String.format("%,.0f", (totalRevenueCurrentMonth - totalRevenuePreviousMonth)) + " VNĐ"},
+                    {"Tỷ lệ tăng/giảm", String.format("%.2f%%", growthRate)}
+            };
+
+            for (String[] row : compareData) {
+                addTableCell(compareTable, row[0], normalFont, Element.ALIGN_LEFT);
+                addTableCell(compareTable, row[1], normalFont, Element.ALIGN_RIGHT);
+            }
+            document.add(compareTable);
+
+            document.close();
+            writer.close();
+
+            // Trả về PDF
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "bao_cao_doanh_thu.pdf");
+            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(outputStream.toByteArray());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError()
+                    .body(("Lỗi tạo PDF: " + e.getMessage()).getBytes());
         }
-        document.add(bookTable);
-        document.add(new Paragraph(" "));
-
-        // Bảng danh mục bán chạy nhất
-        document.add(new Paragraph("5 DANH MUC BAN CHAY NHAT", headerFont));
-        PdfPTable categoryTable = new PdfPTable(2);
-        categoryTable.setWidthPercentage(100);
-        categoryTable.addCell(new PdfPCell(new Phrase("Danh muc", headerFont)));
-        categoryTable.addCell(new PdfPCell(new Phrase("Doanh thu", headerFont)));
-
-        count = 0;
-        for (Object[] category : topSellingCategories) {
-            if (count++ == 5) break;
-            categoryTable.addCell(new PdfPCell(new Phrase(category[0].toString(), normalFont)));
-            categoryTable.addCell(new PdfPCell(new Phrase(String.format("%,.0f VND", ((Number)category[1]).doubleValue()), normalFont)));
-        }
-        document.add(categoryTable);
-        document.add(new Paragraph(" "));
-
-        // So sánh doanh thu
-        document.add(new Paragraph("SO SANH DOANH THU", headerFont));
-        PdfPTable compareTable = new PdfPTable(2);
-        compareTable.setWidthPercentage(100);
-        compareTable.addCell(new PdfPCell(new Phrase("Chi tiet", headerFont)));
-        compareTable.addCell(new PdfPCell(new Phrase("Gia tri", headerFont)));
-
-        compareTable.addCell(new PdfPCell(new Phrase("Doanh thu thang truoc", normalFont)));
-        compareTable.addCell(new PdfPCell(new Phrase(String.format("%,.0f VND", totalRevenuePreviousMonth), normalFont)));
-
-        compareTable.addCell(new PdfPCell(new Phrase("Doanh thu thang nay", normalFont)));
-        compareTable.addCell(new PdfPCell(new Phrase(String.format("%,.0f VND", totalRevenueCurrentMonth), normalFont)));
-
-        compareTable.addCell(new PdfPCell(new Phrase("Chenh lech", normalFont)));
-        compareTable.addCell(new PdfPCell(new Phrase(String.format("%,.0f VND", (totalRevenueCurrentMonth - totalRevenuePreviousMonth)), normalFont)));
-
-        compareTable.addCell(new PdfPCell(new Phrase("Ty le tang/giam", normalFont)));
-        compareTable.addCell(new PdfPCell(new Phrase(String.format("%.2f%%", growthRate), normalFont)));
-
-        document.add(compareTable);
-
-        document.close();
-
-        // Trả về PDF
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=doanh_thu_report.pdf")
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(outputStream.toByteArray());
     }
 
-    // Phương thức tính tỷ lệ tăng/giảm doanh thu
+    /**
+     * Tạo font hỗ trợ tiếng Việt
+     */
+    private Font createVietnameseFont(int size, int style) {
+        try {
+            // Load font từ thư mục resources
+            InputStream fontStream = getClass().getClassLoader().getResourceAsStream("fonts/DejaVuSans.ttf");
+            if (fontStream == null) {
+                throw new IOException("Không tìm thấy font trong resources");
+            }
+            byte[] fontData = fontStream.readAllBytes();
+            BaseFont baseFont = BaseFont.createFont("DejaVuSans.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, true, fontData, null);
+            fontStream.close();
+            return new Font(baseFont, size, style);
+        } catch (Exception e) {
+            System.err.println("Lỗi load font: " + e.getMessage());
+            e.printStackTrace();
+            // Fallback
+            return FontFactory.getFont("Arial", BaseFont.WINANSI, BaseFont.EMBEDDED, size, style);
+        }
+    }
+
+    /**
+     * Thêm header vào bảng
+     */
+    private void addTableHeader(PdfPTable table, String text, Font font) {
+        PdfPCell cell = new PdfPCell(new Phrase(text, font));
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+        cell.setPadding(8f);
+        table.addCell(cell);
+    }
+
+    /**
+     * Thêm ô vào bảng
+     */
+    private void addTableCell(PdfPTable table, String text, Font font, int alignment) {
+        PdfPCell cell = new PdfPCell(new Phrase(text, font));
+        cell.setHorizontalAlignment(alignment);
+        cell.setPadding(5f);
+        table.addCell(cell);
+    }
+
+    /**
+     * Thêm dòng "Không có dữ liệu"
+     */
+    private void addNoDataRow(PdfPTable table, String text, Font font, int colspan) {
+        PdfPCell cell = new PdfPCell(new Phrase(text, font));
+        cell.setColspan(colspan);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setPadding(10f);
+        table.addCell(cell);
+    }
+
+    /**
+     * Tính tỷ lệ tăng trưởng
+     */
     private double calculateGrowthRate(double previousRevenue, double currentRevenue) {
         return previousRevenue == 0 ? 0 : ((currentRevenue - previousRevenue) / previousRevenue) * 100;
     }
